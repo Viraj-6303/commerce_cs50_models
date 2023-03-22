@@ -1,0 +1,36 @@
+{% extends 'auctions/layout.html' %}
+
+
+{% block body %}
+    <h1>{{title.listing_title}}</h1>
+    
+
+    <img src="{{title.image}}" alt="No image preview available." width="400px">
+
+
+    <h5>Starting Price: {{title.price}} USD</h5>
+    <p>{{title.description}}</p>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div>
+            <label for="">Bid:</label>
+            <input type="number" name="bid" id="bid">
+        </div>
+    </form>
+
+    <h2>Comments</h2>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <textarea name="comments" id="" cols="50" rows="3" placeholder="comment"></textarea>
+        <input type="submit" name="" id="">
+    </form>
+
+    
+    {% for comment in comments%}
+        <h6>{{comment.commented_user}}</h6>
+        <p>{{comment.comment}}</p>
+    {% endfor %}
+        
+        
+{% endblock body %}
+    
