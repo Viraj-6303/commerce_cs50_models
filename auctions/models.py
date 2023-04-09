@@ -6,13 +6,20 @@ class User(AbstractUser):
     pass
 
 
+class Category(models.Model):
+    cat_name = models.CharField(max_length=32)
+
+    def __str__(self):
+        return f'{self.cat_name}'
+
 class ActiveListing(models.Model):
-    listing_title = models.CharField(max_length=64, blank=False)
+    listing_title = models.CharField(max_length=64, blank=False, unique=True)
     price = models.IntegerField(blank=False)
-    description = models.CharField(max_length=128, blank=False)
+    description = models.CharField(max_length=128, blank=False, unique=True)
     listing_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_listings")
-    category = models.CharField(max_length=16)
-    image = models.URLField()
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name="cat_listings")
+    image = models.URLField(unique=True)
+    active = models.BooleanField()
 
     def __str__(self):
         return f'{self.listing_title}, Listed By: {self.listing_user}'
@@ -32,3 +39,14 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Title: {self.title.listing_title}, User: {self.commented_user}'
+    
+
+class Watchlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="wl_listings")
+    listings = models.ForeignKey(ActiveListing, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.user} watchlisted {self.listings}'
+    
+    class Meta:
+        unique_together = ('user', 'listings')

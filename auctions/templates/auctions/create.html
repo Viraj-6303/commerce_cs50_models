@@ -1,28 +1,39 @@
 {% extends "auctions/layout.html" %}
 
+{% if user.is_authenticated %}
 
-{% block body %}
-    <h1>Create a Listing</h1>
-    <form action="{% url 'index' %}" method="POST" class="create_list">
-        {% csrf_token %}
-        <div>
-            <label for="title">Title of Listing:</label>
-            <input type="text" name="title" id="title" required>
-        </div>
-        <div>
-            <label for="price">Starting Price:</label>
-            <input type="number" name="price" id="price" placeholder="In USD" required>
-        </div>  
-        <textarea name="description" id="description" cols="50" rows="5" placeholder="Listing Descrption" required></textarea>
-        <div>
-            <label for="category">Category</label>
-            <input type="text" name="category" id="category" placeholder="Fashion, Toys, Electronics, Home, etc.">
-        </div>
-        <div>  
-            <label for="url">Product Image Link</label>
-            <input type="url" name="url" id="url">
-        </div>
-        <input type="submit">
-    </form>
-{% endblock body %}
-    
+
+    {% block body %}
+        {% include 'auctions/messages.html' %}
+        <h1>Create a Listing</h1>
+        <form action="{% url 'index' %}" method="POST" class="create_list">
+            {% csrf_token %}
+            <div>
+                <label for="title">Title of Listing:</label>
+                <input type="text" name="title" id="title" required>
+            </div>
+            <div>
+                <label for="price">Starting Price:</label>
+                <input type="number" name="price" id="price" placeholder="In USD" required>
+            </div>  
+            <textarea name="description" id="description" cols="50" rows="5" placeholder="Listing Descrption" required></textarea>
+            <div>
+                <label for="category">Category</label>
+                <select name="category" id="category">
+                    <option disabled selected value="">Select an option</option>
+                    {% for category in categories %}
+                        <option value="{{category.cat_name}}">{{category.cat_name}}</option>
+                    {% endfor %}
+                        
+                </select>
+            </div>
+            <div>  
+                <label for="url">Product Image Link</label>
+                <input type="url" name="url" id="url">
+            </div>
+            <input type="submit">
+        </form>
+        
+    {% endblock body %}
+
+{% endif %}

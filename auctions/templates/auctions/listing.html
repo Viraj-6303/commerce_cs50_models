@@ -1,36 +1,96 @@
 {% extends 'auctions/layout.html' %}
 
+{% if user.is_authenticated %}
 
-{% block body %}
-    <h1>{{title.listing_title}}</h1>
-    
-
-    <img src="{{title.image}}" alt="No image preview available." width="400px">
-
-
-    <h5>Starting Price: {{title.price}} USD</h5>
-    <p>{{title.description}}</p>
-    <form action="" method="POST">
-        {% csrf_token %}
-        <div>
-            <label for="">Bid:</label>
-            <input type="number" name="bid" id="bid">
-        </div>
-    </form>
-
-    <h2>Comments</h2>
-    <form action="" method="POST">
-        {% csrf_token %}
-        <textarea name="comments" id="" cols="50" rows="3" placeholder="comment"></textarea>
-        <input type="submit" name="" id="">
-    </form>
-
-    
-    {% for comment in comments%}
-        <h6>{{comment.commented_user}}</h6>
-        <p>{{comment.comment}}</p>
-    {% endfor %}
+    {% block body %}
+        {% include 'auctions/messages.html' %}
+        <h1>Listing: {{title.listing_title}}</h1>
+        
+        {% if watchlist %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div>
+                    <input type="submit" name="watchlisted" value="watchlisted" id="watchlisted">
+                </div>  
+            </form>
+        
+        {% else %}
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div>
+                    <input type="submit" name="watchlist" value="watchlist" id="watchlist">
+                </div>  
+            </form>
+        {% endif %}
+            
+            
         
         
-{% endblock body %}
-    
+        <img src="{{title.image}}" alt="No image preview available." height="250px">
+        
+        
+
+        <p>{{title.description}}</p>
+        <h4>${{max_bid}}</h4>
+        <h6>Starting Price: ${{title.price}}</h6>
+        
+        {% if title.active == 0 %}
+            
+            {% if max_bid_user == 0 %}
+                <h4>The auction has been closed and no one had bid on it.</h4>
+            {% else %}
+                <h4>The auction has been closed and sold to 
+                    
+                    {% if max_bid_user == user %}
+                        YOU
+                    {% else %}
+                        {{max_bid_user}} 
+                    {% endif %}
+                        
+                    at ${{max_bid}}</h4>
+            {% endif %}
+                
+            
+        {% else %}
+            <p>{{bid_num}} bid(s) so far. Your bid is the current bid</p>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <div>
+                    <input type="number" name="bid" id="bid">
+                </div>
+                <input type="submit" value="Place Bid">
+            </form>
+
+            {% if user == title.listing_user %}
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" name="close" ïd="close" value="Close the auction">
+                </form>
+            {% endif %}
+        {% endif %}
+            
+
+        
+
+        <ul>
+            <li>Listed by: {{title.listing_user}} </li>
+            <li>Category: {{ title.category }} </li>
+        </ul>
+
+        <h2>Comments</h2>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <textarea name="comments" id="" cols="50" rows="3" placeholder="comment"></textarea>
+            <input type="submit" name="" id="">
+        </form>
+
+        
+        {% for comment in comments%}
+            <h6>{{comment.commented_user}}</h6>
+            <p>{{comment.comment}}</p>
+        {% endfor %}
+            
+            
+    {% endblock body %}
+
+{% endif %}

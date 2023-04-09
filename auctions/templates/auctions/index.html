@@ -1,11 +1,38 @@
 {% extends "auctions/layout.html" %}
 
-{% block body %}
-    <h2>Active Listings</h2>
+    {% block body %}
+        {% if user.is_authenticated %}
+            {% if page == "category" %}
+                <h2>{{cat}}</h2>
+            {% endif %}
+            <h2>Active Listings</h2>
+            {% for listing in listings %}
+                
+                {% if listing.active == 1 %}
+                    <a href="{% url 'listing' listing.listing_title %}"><li>{{listing.listing_title}}</li></a>
+                {% endif %}
+                    
+            {% endfor %}
 
-    
-    {% for listing in listings %}
-        <a href="{% url 'listing' listing.listing_title %}"><li>{{listing.listing_title}}</li></a>
-    {% endfor %}
-        
-{% endblock %}
+            <h2>Closed Listings</h2>
+            
+            {% for listing in listings %}
+                
+                {% if listing.active == 0 %}
+                    <a href="{% url 'listing' listing.listing_title %}"><li>{{listing.listing_title}}</li></a>
+                {% endif %}
+                    
+                
+            {% endfor %}
+        {% else %}
+            <h2>Active Listings</h2>
+            {% for listing in listings %}
+                
+                {% if listing.active == 1 %}
+                    <li>{{listing.listing_title}}</li>
+                {% endif %}
+                    
+            {% endfor %}
+            <h6>login to start bidding</h6>
+        {% endif %}        
+    {% endblock %}
